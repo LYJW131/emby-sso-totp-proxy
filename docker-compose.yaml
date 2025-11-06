@@ -1,0 +1,22 @@
+services:
+  openresty:
+    container_name: emby_openresty
+    image: openresty/openresty:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 8096:8096
+    volumes:
+      - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+      - ./html:/usr/local/openresty/nginx/html:ro
+      - ./lua:/usr/local/openresty/nginx/lua:ro
+      - ${SSL_CERT_PATH}:/etc/nginx/ssl/certificate.crt:ro
+      - ${SSL_KEY_PATH}:/etc/nginx/ssl/private.key:ro
+
+  oauth2-proxy:
+    container_name: emby_oauth2_proxy
+    image: quay.io/oauth2-proxy/oauth2-proxy:latest
+    restart: unless-stopped
+    env_file:
+      - .env

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html data-appversion="4.9.1.80" data-culture="zh-CN" lang="zh" dir="ltr" class="noScrollY theme-dark accent-emby"
+    style="--env-inset-top: 1;">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="viewport-fit=cover, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
+    <meta name="description" content="Unified Authentication">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="format-detection" content="one-time-code">
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <meta http-equiv="X-UA-Compatibility" content="IE=Edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Unified Authentication">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta property="og:title" content="Unified Authentication">
+    <meta property="og:site_name" content="Unified Authentication">
+
+    <meta property="og:description" content="Energize your media.">
+    <meta property="og:type" content="article">
+
+
+    <link rel="apple-touch-icon" href="/web/images/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/web/images/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/web/images/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/web/images/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/web/images/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="384x384" href="/web/images/icon-384x384.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/web/images/icon-512x512.png">
+    <link rel="apple-touch-startup-image" href="/web/images/splash.png">
+    <link rel="shortcut icon" href="/web/favicon.ico">
+    <meta name="msapplication-TileImage" content="/web/images/icon-144x144.png">
+    <meta name="msapplication-TileColor" content="#333333">
+    <meta name="theme-color" content="#141414">
+
+    <title>Unified Authentication</title>
+
+    <style>
+        .app-splash-container {
+            display: none !important;
+        }
+
+        .embedded-iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            margin-top: 2em;
+            border-radius: 4px;
+        }
+
+        .error-message {
+            color: #ff4444;
+            margin-top: 1em;
+            text-align: center;
+            padding: 0.5em;
+            background-color: rgba(255, 68, 68, 0.1);
+            border-radius: 4px;
+        }
+
+        .loading-message {
+            color: #888;
+            margin-top: 1em;
+            text-align: center;
+        }
+    </style>
+
+    <!-- CSS引用 -->
+    <link rel="stylesheet" type="text/css" href="/web/modules/fonts/fonts.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/fonts/fonts_osx.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/flexstyles.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/layout/layout.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/layout/layout_nontv.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/sections/sections.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/sections/sections_nontv.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/sections/sections_post.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/loading/loading.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/scroller/scroller_nontv.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/scroller/scroller.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/backdrop/style.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/headroom/headroom.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/youtubeplayer/style.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/htmlvideoplayer/style.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/emby-elements/emby-button/emby-button.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/emby-elements/emby-button/emby-button_nontv.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/emby-elements/emby-scrollbuttons/emby-scrollbuttons.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/emby-elements/emby-tabs/emby-tabs.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/virtual-scroller/virtual-scroller.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/fonts/material-icons/style.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/mediainfo/mediainfo.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/emby-elements/guide/programs.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/indicators/indicators.css">
+    <link rel="stylesheet" type="text/css"
+        href="/web/modules/emby-elements/emby-itemscontainer/emby-itemscontainer.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/listview/listview.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/cardbuilder/card.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/cardbuilder/card_nontv.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/cardbuilder/card_sizes_varcalcmax.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/cardbuilder/card_sizes_horizontal_container.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/cardbuilder/card_sizes_horizontal_all.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/cardbuilder/card_nontv2.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/cardbuilder/card_post.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/navdrawer/navdrawer.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/navdrawer/navdrawer_nontv.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/appheader/appheader.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/appheader/appheader_nontv.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/themes/dark/theme.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/themes/dark/theme_nontv.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/themes/common/darkcontentcontainer_item.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/themes/common/darkcontentcontainer.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/themes/common/darkcontentcontainer_nontv.css">
+    <link rel="stylesheet" type="text/css" href="/emby/Branding/Css.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/formdialog/formdialog.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/formdialog/formdialog_nontv.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/appfooter/appfooter.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/dockedtabs/dockedtabs.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/dialoghelper/dialoghelper.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/dialoghelper/dialoghelper_nontv.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/dialoghelper/dialoghelper2.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/dialoghelper/dialoghelper_nontv2.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/dialoghelper/dialoghelper3.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/actionsheet/actionsheet.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/viewmanager/transitions.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/emby-elements/emby-input/emby-input.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/emby-elements/emby-toggle/emby-toggle.css">
+    <link rel="stylesheet" type="text/css" href="/web/modules/emby-elements/emby-toggle/emby-toggle_nontv.css">
+</head>
+
+<body class="mainAnimatedPages skinBody">
+    <div class="backdropContainer"></div>
+    <div class="backgroundContainer"></div>
+    <div class="mainDrawer hide focuscontainer padded-bottom-page emby-scroller scrollY scrollY-mini scrollFrameY flex-direction-column"
+        is="emby-scroller" data-miniscrollbar="true" data-horizontal="false" data-focusscroll="true"
+        data-navcommands="card" data-bindheader="false">
+        <div class="scrollSlider mainDrawerScrollSlider scrollSliderY"></div>
+    </div>
+    <div class="skinHeader focuscontainer-x focuscontainer-up headroom flex align-items-center flex-grow headerTop skinHeader-withBackground adjustHeaderForEmbeddedScroll"
+        style="translate: none;">
+        <div class="headerLeft headerSection focuscontainer-x navout-x">
+            <button type="button" is="paper-icon-button-light"
+                class="headerBackButton headerButton headerSectionItem hide-mouse-idle-tv paper-icon-button-light headerBackButton-showfullscreen"
+                tabindex="-1" title="" aria-label="">
+                <i class="md-icon autortl"></i>
+            </button>
+            <h2 class="pageTitle headerSectionItem pageTitleWithLogo pageTitleWithDefaultLogo"></h2>
+        </div>
+    </div>
+    <div class="appfooter"></div>
+    <div is="emby-scroller"
+        class="view flex flex-direction-column scrollFrameY flex-grow emby-scroller page scrollY overflowYScroll focuscontainer-x view-startup-manuallogin"
+        data-mousewheel="true" data-horizontal="false" data-forcescrollbar="true" data-focusscroll="true"
+        data-bindheader="true">
+        <div
+            class="scrollSlider flex-grow flex-direction-column padded-left padded-right padded-top-page padded-bottom-page scrollSliderY focuscontainer-y navout-up">
+            <form class="auto-center">
+                <h1 style="margin-top:0;" class="viewTitle">Unified Authentication</h1>
+
+                <div class="inputContainer">
+                    <label class="inputLabel" for="embyinput0">Username</label>
+                    <input is="emby-input" class="txtUserName emby-input emby-input-smaller" type="text"
+                        autocomplete="off" label="Username" required="" id="embyinput0">
+                </div>
+                <div class="inputContainer">
+                    <label class="inputLabel" for="embyinput1">TOTP Code</label>
+                    <input is="emby-input" class="txtPassword emby-input emby-input-smaller" type="text" name="otp"
+                        autocomplete="one-time-code" inputmode="numeric" pattern="[0-9]*" maxlength="6"
+                        label="TOTP Code" required="" id="embyinput1">
+                </div>
+                <button is="emby-button" type="submit" class="raised block paperSubmit emby-button button-hoverable"
+                    style="margin-top:2em;" id="totp-submit" disabled>
+                    <span>TOTP</span>
+                </button>
+                <button is="emby-button" type="button" class="raised block buttonCancel emby-button button-hoverable"
+                    onclick="window.location.href='/oauth2/sign_in?rd=%2F'" id="sso-button" disabled>
+                    <span>Synology SSO</span>
+                </button>
+
+                <p class="disclaimer" style="text-align: center; margin-top: 2em;"></p>
+                <div id="error-message" class="error-message"
+                    style="display: none; color: #ff4444; margin-top: 1em; text-align: center;"></div>
+                <div id="loading-message" class="loading-message"
+                    style="display: none; color: #888; margin-top: 1em; text-align: center;">登录中...</div>
+            </form>
+            <iframe src="/web/index.html" class="embedded-iframe hide" title="Emby Web Interface"></iframe>
+        </div>
+    </div>
+</body>
+
+<script>
+    (function () {
+        const totpBtn = document.getElementById('totp-submit');
+        const ssoBtn = document.getElementById('sso-button');
+        let buttonsEnabled = false;
+
+        function enableButtons() {
+            if (buttonsEnabled || !totpBtn || !ssoBtn) return;
+            buttonsEnabled = true;
+            totpBtn.disabled = false;
+            ssoBtn.disabled = false;
+            console.log("[LoginPage] Buttons enabled");
+        }
+
+        // 监听来自iframe的消息
+        window.addEventListener('message', function (event) {
+            if (event.data && event.data.type === 'BRANDING_CONFIG_LOADED') {
+                enableButtons();
+            }
+        });
+
+        // 10秒后强制启用按钮
+        setTimeout(enableButtons, 2000);
+
+        // iframe加载完成后注入监听脚本
+        const iframe = document.querySelector('.embedded-iframe');
+        if (iframe) {
+            iframe.onload = function () {
+                try {
+                    const iframeWindow = iframe.contentWindow;
+                    const script = document.createElement('script');
+                    script.textContent = `
+          (function() {
+            let found = false;
+            
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+              const url = String(args[0] || '');
+              if (!found && url.includes('/emby/Branding/Configuration')) {
+                found = true;
+                try {
+                  window.parent.postMessage({ type: 'BRANDING_CONFIG_LOADED' }, '*');
+                } catch(e) {}
+              }
+              return originalFetch.apply(this, args);
+            };
+
+            const originalXHR = XMLHttpRequest.prototype.open;
+            XMLHttpRequest.prototype.open = function(method, url) {
+              if (!found && url && url.includes('/emby/Branding/Configuration')) {
+                found = true;
+                try {
+                  window.parent.postMessage({ type: 'BRANDING_CONFIG_LOADED' }, '*');
+                } catch(e) {}
+              }
+              return originalXHR.apply(this, arguments);
+            };
+          })();
+        `;
+                    iframeWindow.document.head.appendChild(script);
+                } catch (e) {
+                    // 跨域或其他错误时使用10秒超时作为备选
+                }
+            };
+        }
+
+        // ============================================================
+        // TOTP 登录功能实现
+        // ============================================================
+
+        // 获取 iframe 中的 ApiClient
+        function getIframeApiClient() {
+            const iframe = document.querySelector('.embedded-iframe');
+            if (!iframe || !iframe.contentWindow) {
+                return null;
+            }
+            return iframe.contentWindow.ApiClient;
+        }
+
+        // 等待 ApiClient 就绪
+        function waitForApiClient(timeout = 10000) {
+            return new Promise((resolve, reject) => {
+                const startTime = Date.now();
+                const checkInterval = 100; // 每100ms检查一次
+
+                function checkApiClient() {
+                    const apiClient = getIframeApiClient();
+
+                    if (apiClient && typeof apiClient.authenticateUserByName === 'function') {
+                        console.log("[TOTP Login] ApiClient is ready");
+                        resolve(apiClient);
+                        return;
+                    }
+
+                    if (Date.now() - startTime >= timeout) {
+                        reject(new Error('ApiClient not available after timeout'));
+                        return;
+                    }
+
+                    setTimeout(checkApiClient, checkInterval);
+                }
+
+                checkApiClient();
+            });
+        }
+
+        // 显示错误消息
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            const loadingDiv = document.getElementById('loading-message');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+            if (loadingDiv) {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        // 隐藏错误消息
+        function hideError() {
+            const errorDiv = document.getElementById('error-message');
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+                errorDiv.textContent = '';
+            }
+        }
+
+        // 显示加载状态
+        function showLoading() {
+            const loadingDiv = document.getElementById('loading-message');
+            const errorDiv = document.getElementById('error-message');
+            if (loadingDiv) {
+                loadingDiv.style.display = 'block';
+            }
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+            if (totpBtn) {
+                totpBtn.disabled = true;
+                const span = totpBtn.querySelector('span');
+                if (span) {
+                    span.textContent = '登录中...';
+                }
+            }
+        }
+
+        // 隐藏加载状态
+        function hideLoading() {
+            const loadingDiv = document.getElementById('loading-message');
+            if (loadingDiv) {
+                loadingDiv.style.display = 'none';
+            }
+            if (totpBtn) {
+                totpBtn.disabled = false;
+                const span = totpBtn.querySelector('span');
+                if (span) {
+                    span.textContent = 'TOTP';
+                }
+            }
+        }
+
+        // 处理 TOTP 登录
+        async function handleTotpLogin(event) {
+            event.preventDefault();
+
+            const usernameInput = document.getElementById('embyinput0');
+            const totpInput = document.getElementById('embyinput1');
+
+            if (!usernameInput || !totpInput) {
+                showError('无法找到输入框');
+                return;
+            }
+
+            const username = usernameInput.value.trim();
+            const totpCode = totpInput.value.trim();
+
+            if (!username) {
+                showError('请输入用户名');
+                return;
+            }
+
+            if (!totpCode) {
+                showError('请输入 TOTP 验证码');
+                return;
+            }
+
+            // 验证 TOTP 格式（6位数字）
+            if (!/^\d{6}$/.test(totpCode)) {
+                showError('TOTP 验证码必须是6位数字');
+                return;
+            }
+
+            hideError();
+            showLoading();
+
+            try {
+                console.log("[TOTP Login] Waiting for ApiClient...");
+                const apiClient = await waitForApiClient(10000);
+
+                console.log("[TOTP Login] Attempting authentication for user:", username);
+                const result = await apiClient.authenticateUserByName(username, totpCode, true);
+
+                console.log("[TOTP Login] Authentication successful");
+                apiClient.ensureWebSocket();
+
+                // 登录成功，重定向到 Emby 主界面
+                window.location.href = '/web/index.html#!/home';
+
+            } catch (error) {
+                console.error("[TOTP Login] Authentication failed:", error);
+
+                // 检查错误类型
+                let errorMessage = '登录失败';
+
+                if (error.message && error.message.includes('timeout')) {
+                    errorMessage = 'ApiClient 未就绪，请稍后重试';
+                } else if (error.status === 403 || error.statusCode === 403) {
+                    errorMessage = 'TOTP 验证码错误或已过期，请使用新的验证码';
+                } else if (error.status === 401 || error.statusCode === 401) {
+                    errorMessage = '用户名或验证码错误';
+                } else if (error.message) {
+                    errorMessage = '登录失败: ' + error.message;
+                }
+
+                showError(errorMessage);
+                hideLoading();
+            }
+        }
+
+        // 绑定表单提交事件
+        const form = document.querySelector('form.auto-center');
+        if (form) {
+            form.addEventListener('submit', handleTotpLogin);
+        }
+
+        // 也绑定按钮点击事件（作为备用）
+        if (totpBtn) {
+            totpBtn.addEventListener('click', function (event) {
+                // 如果按钮在表单内，让表单的 submit 事件处理
+                if (form && form.contains(totpBtn)) {
+                    return; // 让表单的 submit 事件处理
+                }
+                // 否则直接调用处理函数
+                handleTotpLogin(event);
+            });
+        }
+
+        // TOTP 输入框自动提交功能（输入6位数字后自动提交）
+        const totpInput = document.getElementById('embyinput1');
+        if (totpInput) {
+            totpInput.addEventListener('input', function () {
+                // 只允许输入数字
+                this.value = this.value.replace(/[^0-9]/g, '');
+
+                // 当输入长度达到6位时自动提交
+                if (this.value.length === 6) {
+                    // 确保用户名已填写
+                    const usernameInput = document.getElementById('embyinput0');
+                    if (usernameInput && usernameInput.value.trim()) {
+                        // 延迟一小段时间，确保输入完成
+                        setTimeout(function () {
+                            if (form) {
+                                form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+                            }
+                        }, 100);
+                    }
+                }
+            });
+        }
+
+        console.log("[TOTP Login] TOTP login handler initialized");
+    })();
+</script>
+
+</html>
