@@ -75,10 +75,10 @@
                 // 触发 PopStateEvent 事件
                 window.dispatchEvent(new PopStateEvent('popstate', { state: { path: '/web#!/home' } }));
 
-                // 等待1ms后再次触发
+                // 等待100ms后再次触发
                 setTimeout(function () {
                     window.dispatchEvent(new PopStateEvent('popstate', { state: { path: '/web#!/home' } }));
-                }, 1);
+                }, 100);
             }, 50);
         }).catch(function (error) {
             // 重置登录完成标志，允许重试
