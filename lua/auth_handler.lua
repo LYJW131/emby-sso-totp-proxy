@@ -255,14 +255,13 @@ function create_emby_user(username, original_body)
     ngx.log(ngx.INFO, "[Emby Web] Creating user with request body: ", user_creation_body)
     ngx.log(ngx.INFO, "[Emby Web] Request URL: /emby_create_user")
     ngx.log(ngx.INFO, "[Emby Web] Request method: POST")
-    ngx.log(ngx.INFO, "[Emby Web] API key prefix in query: ", api_key_prefix)
+    ngx.log(ngx.INFO, "[Emby Web] Using EMBY_API_KEY from environment (prefix: ", api_key_prefix, ")")
     
     local create_user_res = ngx.location.capture(
         "/emby_create_user",
         {
             method = ngx.HTTP_POST,
-            body = user_creation_body,
-            args = "api_key=" .. ngx.escape_uri(_G.emby_api_key)
+            body = user_creation_body
         }
     )
     
@@ -332,14 +331,14 @@ function create_emby_user(username, original_body)
     ngx.log(ngx.INFO, "[Emby Web] Policy configuration: ", policy_body)
     ngx.log(ngx.INFO, "[Emby Web] Request URL: /emby_set_user_policy")
     ngx.log(ngx.INFO, "[Emby Web] Request method: POST")
-    ngx.log(ngx.INFO, "[Emby Web] Query parameters: user_id=", user_id, "&api_key=", api_key_prefix)
+    ngx.log(ngx.INFO, "[Emby Web] Query parameters: user_id=", user_id)
     
     local policy_res = ngx.location.capture(
         "/emby_set_user_policy",
         {
             method = ngx.HTTP_POST,
             body = policy_body,
-            args = "user_id=" .. ngx.escape_uri(user_id) .. "&api_key=" .. ngx.escape_uri(_G.emby_api_key)
+            args = "user_id=" .. ngx.escape_uri(user_id)
         }
     )
     
