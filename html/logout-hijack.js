@@ -1,5 +1,5 @@
-// 注销按钮和切换用户按钮劫持脚本
-// 功能：劫持注销退出按钮和切换用户按钮，点击后重定向到指定页面
+// 注销退出按钮和更改用户按钮劫持脚本
+// 功能：劫持注销退出按钮和更改用户按钮，点击后重定向到指定页面
 
 (function () {
     'use strict';
@@ -8,21 +8,91 @@
     const LOGIN_PAGE_URL = '/oauth2/sign_out?rd=%2Flogin.html';
     const SWITCH_USER_URL = '/oauth2/sign_in?rd=%2Fweb%2Findex.html';
 
-    // 注入CSS样式，强制显示"更改用户"/"切换用户"按钮
+    // 多语言翻译文本 - 用于匹配所有语言版本的按钮
+    const TRANSLATIONS = {
+        changeUser: [
+            "Change User",
+            "Canvia d'usuari",
+            "Změnit uživatele",
+            "Benutzer wechseln",
+            "Αλλαγή  Χρήστη",
+            "Cambiar Usuario",
+            "Vaheta kasutajat",
+            "Vaihda käyttäjää",
+            "Changer d'utilisateur",
+            "החלף משתמש",
+            "Felhasználó módosítása",
+            "Beralih Pengguna",
+            "Cambia utente",
+            "사용자 변경",
+            "Bytt bruker",
+            "Gebruiker wijzigen",
+            "Zmień użytkownika",
+            "Mudar Usuário",
+            "Alterar Utilizador",
+            "Смена пользователя",
+            "Zmeniť používateľa",
+            "Preklopi med uporabniki",
+            "Ndërro Përdoruesin",
+            "Byt användare",
+            "Kullanıcıyı değiştir",
+            "Змінити користувача",
+            "Thay đổi người dùng",
+            "更改用户",
+            "更換使用者",
+            "變更使用者"
+        ],
+        signOut: [
+            "Sign Out",
+            "تسجيل الخروج",
+            "Tanca Sessió",
+            "Odhlásit se",
+            "Abmelden",
+            "Αποσύνδεση",
+            "Desconectarse",
+            "Cerrar Sesión",
+            "Logi välja",
+            "Kirjaudu ulos",
+            "Déconnexion",
+            "התנתק",
+            "Kijelentkezés",
+            "Keluar",
+            "Disconnessione",
+            "로그아웃",
+            "Atsijungti",
+            "Logg Ut",
+            "Afmelden",
+            "Wyloguj",
+            "Sair",
+            "Odhlásiť sa",
+            "Odjava",
+            "Dil",
+            "Logga ut",
+            "Oturumu Kapat",
+            "Вийти",
+            "Đăng xuất",
+            "注销退出",
+            "登出"
+        ]
+    };
+
+    // 注入CSS样式，强制显示"更改用户"按钮（支持多语言）
     function injectSwitchUserButtonStyles() {
         // 检查是否已经注入过
         if (document.getElementById('switch-user-button-styles')) {
             return;
         }
 
+        // 生成多语言 CSS 选择器
+        const changeUserSelectors = TRANSLATIONS.changeUser.map(text =>
+            `button[aria-label*="${text.replace(/"/g, '\\"')}"]`
+        ).join(',\n            ');
+
         const style = document.createElement('style');
         style.id = 'switch-user-button-styles';
         style.textContent = `
-            /* 强制显示"更改用户"/"切换用户"按钮 */
-            button[aria-label*="更改用户"],
-            button[aria-label*="切换用户"],
-            button[data-id*="switchuser"],
-            button.btnSwitchUser {
+            /* 强制显示"更改用户"按钮（多语言支持） */
+            ${changeUserSelectors} {
                 display: flex !important;
                 visibility: visible !important;
                 opacity: 1 !important;
@@ -37,11 +107,11 @@
         const target = document.head || document.body;
         if (target) {
             target.appendChild(style);
-            console.log('切换用户按钮 CSS 样式已注入');
+            console.log('更改用户按钮 CSS 样式已注入（多语言支持）');
         }
     }
 
-    // 使用 JavaScript 方式强制显示包含特定文本的按钮
+    // 使用 JavaScript 方式强制显示包含特定文本的按钮（支持多语言）
     function forceShowSwitchUserButtons() {
         if (!document.body) return;
 
@@ -50,10 +120,12 @@
             const text = btn.textContent || '';
             const ariaLabel = btn.getAttribute('aria-label') || '';
 
-            // 检查按钮文本或 aria-label 是否包含相关关键词
-            if (text.includes('切换用户') || text.includes('更改用户') ||
-                ariaLabel.includes('切换用户') || ariaLabel.includes('更改用户')) {
+            // 检查按钮文本或 aria-label 是否包含任何一种语言的"更改用户"文本
+            const isChangeUserButton = TRANSLATIONS.changeUser.some(translation =>
+                text.includes(translation) || ariaLabel.includes(translation)
+            );
 
+            if (isChangeUserButton) {
                 // 强制显示按钮
                 btn.style.display = 'flex';
                 btn.style.visibility = 'visible';
@@ -81,18 +153,18 @@
         });
     }
 
-    // 劫持注销按钮的函数
+    // 劫持注销按钮的函数（支持多语言）
     function hijackLogoutButton() {
         // 如果 DOM 还没准备好，直接返回
         if (!document.body) {
             return false;
         }
 
-        // 查找所有按钮，找到包含"注销退出"或"注销"文本的按钮
+        // 查找所有按钮，找到包含任何一种语言的"注销退出"文本的按钮
         const buttons = Array.from(document.querySelectorAll('button'));
         const logoutBtn = buttons.find(btn => {
             const text = btn.textContent || '';
-            return text.includes('注销退出') || text.includes('注销');
+            return TRANSLATIONS.signOut.some(translation => text.includes(translation));
         });
 
         // 如果找到注销按钮且尚未被劫持
@@ -130,26 +202,27 @@
         return false;
     }
 
-    // 劫持切换用户按钮的函数
+    // 劫持切换用户按钮的函数（支持多语言）
     function hijackSwitchUserButton() {
         // 如果 DOM 还没准备好，直接返回
         if (!document.body) {
             return false;
         }
 
-        // 先强制显示所有切换用户按钮
+        // 先强制显示所有更改用户按钮
         forceShowSwitchUserButtons();
 
-        // 查找所有按钮，找到包含"切换用户"或"更改用户"文本的按钮
+        // 查找所有按钮，找到包含任何一种语言的"更改用户"文本的按钮
         const buttons = Array.from(document.querySelectorAll('button'));
         const switchUserBtn = buttons.find(btn => {
             const text = btn.textContent || '';
             const ariaLabel = btn.getAttribute('aria-label') || '';
-            return text.includes('切换用户') || text.includes('更改用户') ||
-                ariaLabel.includes('切换用户') || ariaLabel.includes('更改用户');
+            return TRANSLATIONS.changeUser.some(translation =>
+                text.includes(translation) || ariaLabel.includes(translation)
+            );
         });
 
-        // 如果找到切换用户按钮且尚未被劫持
+        // 如果找到更改用户按钮且尚未被劫持
         if (switchUserBtn && !switchUserBtn.dataset.hijacked) {
             // 标记为已劫持，避免重复处理
             switchUserBtn.dataset.hijacked = 'true';
@@ -164,7 +237,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
-                console.log('切换用户按钮被劫持，执行清理操作后重定向到', SWITCH_USER_URL);
+                console.log('更改用户按钮被劫持，执行清理操作后重定向到', SWITCH_USER_URL);
 
                 // 清理服务器凭证和会话数据
                 (c => (c.Servers = (c.Servers || []).map(s => ({ ...s, UserId: null, Users: [] })), localStorage.setItem('servercredentials3', JSON.stringify(c)), sessionStorage.removeItem('pinvalidated')))(JSON.parse(localStorage.getItem('servercredentials3') || '{}'));
@@ -216,7 +289,7 @@
             }, 500);
         }
 
-        console.log('注销按钮和切换用户按钮劫持脚本已初始化（包含CSS强制显示）');
+        console.log('注销退出按钮和更改用户按钮劫持脚本已初始化（包含CSS强制显示，支持多语言）');
     }
 
     // 如果 DOM 已经准备好，立即初始化
