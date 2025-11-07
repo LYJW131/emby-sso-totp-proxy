@@ -112,29 +112,14 @@
                 e.stopImmediatePropagation();
                 console.log('注销按钮被劫持，执行清理操作后重定向到', LOGIN_PAGE_URL);
 
-                // 执行清理操作
-                try {
-                    // 清理 localStorage
-                    if (window.localStorage) {
-                        localStorage.clear();
-                        console.log('localStorage 已清理');
-                    }
+                // 清理服务器凭证和会话数据
+                (c => (c.Servers = (c.Servers || []).map(s => ({ ...s, UserId: null, Users: [] })), localStorage.setItem('servercredentials3', JSON.stringify(c)), sessionStorage.removeItem('pinvalidated')))(JSON.parse(localStorage.getItem('servercredentials3') || '{}'));
+                console.log('已清理服务器凭证信息');
 
-                    // 清理 sessionStorage
-                    if (window.sessionStorage) {
-                        sessionStorage.clear();
-                        console.log('sessionStorage 已清理');
-                    }
-
-                    // 调用 ApiClient.logout()
-                    if (window.ApiClient && window.ApiClient.logout) {
-                        window.ApiClient.logout();
-                        console.log('ApiClient.logout() 已调用');
-                    }
-                } catch (err) {
-                    console.error('清理操作出错:', err);
+                // 先调用 logout API
+                if (window.ApiClient && window.ApiClient.logout) {
+                    window.ApiClient.logout();
                 }
-
                 // 重定向到登录页面
                 window.location.href = LOGIN_PAGE_URL;
                 return false;
@@ -181,28 +166,9 @@
                 e.stopImmediatePropagation();
                 console.log('切换用户按钮被劫持，执行清理操作后重定向到', SWITCH_USER_URL);
 
-                // 执行清理操作
-                try {
-                    // 清理 localStorage
-                    if (window.localStorage) {
-                        localStorage.clear();
-                        console.log('localStorage 已清理');
-                    }
-
-                    // 清理 sessionStorage
-                    if (window.sessionStorage) {
-                        sessionStorage.clear();
-                        console.log('sessionStorage 已清理');
-                    }
-
-                    // 调用 ApiClient.logout()
-                    if (window.ApiClient && window.ApiClient.logout) {
-                        window.ApiClient.logout();
-                        console.log('ApiClient.logout() 已调用');
-                    }
-                } catch (err) {
-                    console.error('清理操作出错:', err);
-                }
+                // 清理服务器凭证和会话数据
+                (c => (c.Servers = (c.Servers || []).map(s => ({ ...s, UserId: null, Users: [] })), localStorage.setItem('servercredentials3', JSON.stringify(c)), sessionStorage.removeItem('pinvalidated')))(JSON.parse(localStorage.getItem('servercredentials3') || '{}'));
+                console.log('已清理服务器凭证信息');
 
                 // 重定向到 OAuth2 登录页面
                 window.location.href = SWITCH_USER_URL;
