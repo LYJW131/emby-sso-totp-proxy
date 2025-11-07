@@ -1,11 +1,85 @@
-// 注销按钮劫持脚本
-// 功能：劫持注销退出按钮，点击后重定向到 /login.html
+// 注销按钮和切换用户按钮劫持脚本
+// 功能：劫持注销退出按钮和切换用户按钮，点击后重定向到指定页面
 
 (function () {
     'use strict';
 
     // 重定向位置配置（只配置一次）
     const LOGIN_PAGE_URL = '/oauth2/sign_out?rd=%2Flogin.html';
+    const SWITCH_USER_URL = '/oauth2/sign_in?rd=%2Fweb%2Findex.html';
+
+    // 注入CSS样式，强制显示"更改用户"/"切换用户"按钮
+    function injectSwitchUserButtonStyles() {
+        // 检查是否已经注入过
+        if (document.getElementById('switch-user-button-styles')) {
+            return;
+        }
+
+        const style = document.createElement('style');
+        style.id = 'switch-user-button-styles';
+        style.textContent = `
+            /* 强制显示"更改用户"/"切换用户"按钮 */
+            button[aria-label*="更改用户"],
+            button[aria-label*="切换用户"],
+            button[data-id*="switchuser"],
+            button.btnSwitchUser {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                height: auto !important;
+                width: auto !important;
+                min-height: 43px !important;
+                min-width: 179px !important;
+            }
+        `;
+
+        // 将样式添加到 head 或 body
+        const target = document.head || document.body;
+        if (target) {
+            target.appendChild(style);
+            console.log('切换用户按钮 CSS 样式已注入');
+        }
+    }
+
+    // 使用 JavaScript 方式强制显示包含特定文本的按钮
+    function forceShowSwitchUserButtons() {
+        if (!document.body) return;
+
+        const buttons = Array.from(document.querySelectorAll('button'));
+        buttons.forEach(btn => {
+            const text = btn.textContent || '';
+            const ariaLabel = btn.getAttribute('aria-label') || '';
+
+            // 检查按钮文本或 aria-label 是否包含相关关键词
+            if (text.includes('切换用户') || text.includes('更改用户') ||
+                ariaLabel.includes('切换用户') || ariaLabel.includes('更改用户')) {
+
+                // 强制显示按钮
+                btn.style.display = 'flex';
+                btn.style.visibility = 'visible';
+                btn.style.opacity = '1';
+                btn.style.height = 'auto';
+                btn.style.width = 'auto';
+                btn.style.minHeight = '43px';
+                btn.style.minWidth = '179px';
+
+                // 确保父元素也是可见的
+                let parent = btn.parentElement;
+                while (parent && parent !== document.body) {
+                    if (parent.style.display === 'none') {
+                        parent.style.display = '';
+                    }
+                    if (parent.style.visibility === 'hidden') {
+                        parent.style.visibility = 'visible';
+                    }
+                    if (parent.style.opacity === '0') {
+                        parent.style.opacity = '1';
+                    }
+                    parent = parent.parentElement;
+                }
+            }
+        });
+    }
 
     // 劫持注销按钮的函数
     function hijackLogoutButton() {
@@ -36,11 +110,31 @@
                 e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
-                console.log('注销按钮被劫持，调用 logout API 后重定向到', LOGIN_PAGE_URL);
-                // 先调用 logout API
-                if (window.ApiClient && window.ApiClient.logout) {
-                    window.ApiClient.logout();
+                console.log('注销按钮被劫持，执行清理操作后重定向到', LOGIN_PAGE_URL);
+
+                // 执行清理操作
+                try {
+                    // 清理 localStorage
+                    if (window.localStorage) {
+                        localStorage.clear();
+                        console.log('localStorage 已清理');
+                    }
+
+                    // 清理 sessionStorage
+                    if (window.sessionStorage) {
+                        sessionStorage.clear();
+                        console.log('sessionStorage 已清理');
+                    }
+
+                    // 调用 ApiClient.logout()
+                    if (window.ApiClient && window.ApiClient.logout) {
+                        window.ApiClient.logout();
+                        console.log('ApiClient.logout() 已调用');
+                    }
+                } catch (err) {
+                    console.error('清理操作出错:', err);
                 }
+
                 // 重定向到登录页面
                 window.location.href = LOGIN_PAGE_URL;
                 return false;
@@ -51,16 +145,92 @@
         return false;
     }
 
+    // 劫持切换用户按钮的函数
+    function hijackSwitchUserButton() {
+        // 如果 DOM 还没准备好，直接返回
+        if (!document.body) {
+            return false;
+        }
+
+        // 先强制显示所有切换用户按钮
+        forceShowSwitchUserButtons();
+
+        // 查找所有按钮，找到包含"切换用户"或"更改用户"文本的按钮
+        const buttons = Array.from(document.querySelectorAll('button'));
+        const switchUserBtn = buttons.find(btn => {
+            const text = btn.textContent || '';
+            const ariaLabel = btn.getAttribute('aria-label') || '';
+            return text.includes('切换用户') || text.includes('更改用户') ||
+                ariaLabel.includes('切换用户') || ariaLabel.includes('更改用户');
+        });
+
+        // 如果找到切换用户按钮且尚未被劫持
+        if (switchUserBtn && !switchUserBtn.dataset.hijacked) {
+            // 标记为已劫持，避免重复处理
+            switchUserBtn.dataset.hijacked = 'true';
+
+            // 通过克隆节点移除所有现有的事件监听器
+            const newButton = switchUserBtn.cloneNode(true);
+            switchUserBtn.parentNode.replaceChild(newButton, switchUserBtn);
+            newButton.dataset.hijacked = 'true';
+
+            // 添加新的事件监听器，在捕获阶段执行以确保优先于原有事件
+            newButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                console.log('切换用户按钮被劫持，执行清理操作后重定向到', SWITCH_USER_URL);
+
+                // 执行清理操作
+                try {
+                    // 清理 localStorage
+                    if (window.localStorage) {
+                        localStorage.clear();
+                        console.log('localStorage 已清理');
+                    }
+
+                    // 清理 sessionStorage
+                    if (window.sessionStorage) {
+                        sessionStorage.clear();
+                        console.log('sessionStorage 已清理');
+                    }
+
+                    // 调用 ApiClient.logout()
+                    if (window.ApiClient && window.ApiClient.logout) {
+                        window.ApiClient.logout();
+                        console.log('ApiClient.logout() 已调用');
+                    }
+                } catch (err) {
+                    console.error('清理操作出错:', err);
+                }
+
+                // 重定向到 OAuth2 登录页面
+                window.location.href = SWITCH_USER_URL;
+                return false;
+            }, true); // true 表示在捕获阶段执行
+
+            return true;
+        }
+        return false;
+    }
+
     // 初始化函数
     function init() {
+        // 首先注入CSS样式
+        injectSwitchUserButtonStyles();
+
         // 立即尝试劫持一次（针对菜单已打开的情况）
         hijackLogoutButton();
+        hijackSwitchUserButton();
 
         // 使用 MutationObserver 监听 DOM 变化
-        // 当菜单重新打开时会动态创建注销按钮，需要重新劫持
+        // 当菜单重新打开时会动态创建按钮，需要重新劫持
         if (document.body && !window.logoutHijackObserver) {
             window.logoutHijackObserver = new MutationObserver(function (mutations) {
+                // 每次DOM变化时，重新确保CSS已注入
+                injectSwitchUserButtonStyles();
                 hijackLogoutButton();
+                hijackSwitchUserButton();
             });
 
             // 监听整个 body 的子树变化
@@ -71,12 +241,16 @@
         }
 
         // 定期检查作为备用方案（每500毫秒）
-        // 确保即使 MutationObserver 遗漏也能捕获到注销按钮
+        // 确保即使 MutationObserver 遗漏也能捕获到按钮
         if (!window.logoutHijackInterval) {
-            window.logoutHijackInterval = setInterval(hijackLogoutButton, 500);
+            window.logoutHijackInterval = setInterval(function () {
+                forceShowSwitchUserButtons();
+                hijackLogoutButton();
+                hijackSwitchUserButton();
+            }, 500);
         }
 
-        console.log('注销按钮劫持脚本已初始化');
+        console.log('注销按钮和切换用户按钮劫持脚本已初始化（包含CSS强制显示）');
     }
 
     // 如果 DOM 已经准备好，立即初始化
