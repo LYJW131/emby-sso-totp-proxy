@@ -11,6 +11,7 @@ services:
       - ./nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
       - ./html:/usr/local/openresty/nginx/html:ro
       - ./lua:/usr/local/openresty/nginx/lua:ro
+      - ./setNewUserPolicy.json:/usr/local/openresty/nginx/setNewUserPolicy.json:ro
       - ${SSL_CERT_PATH}:/etc/nginx/ssl/certificate.crt:ro
       - ${SSL_KEY_PATH}:/etc/nginx/ssl/private.key:ro
 

@@ -95,6 +95,45 @@ else
     ngx.log(ngx.INFO, "[EMBY Config] EMBY_API_KEY loaded from environment variable")
 end
 
+-- 读取用户策略配置文件
+local new_user_policy = nil
+local policy_file_path = "/usr/local/openresty/nginx/setNewUserPolicy.json"
+local policy_file = io.open(policy_file_path, "r")
+if policy_file then
+    local policy_content = policy_file:read("*all")
+    policy_file:close()
+    
+    if policy_content and policy_content ~= "" then
+        local cjson = require("cjson")
+        local ok, parsed_policy = pcall(cjson.decode, policy_content)
+        if ok and parsed_policy then
+            new_user_policy = parsed_policy
+            ngx.log(ngx.INFO, "[Policy Config] Successfully loaded user policy from ", policy_file_path)
+        else
+            ngx.log(ngx.ERR, "[Policy Config] Failed to parse policy JSON file: ", policy_file_path)
+        end
+    else
+        ngx.log(ngx.ERR, "[Policy Config] Policy file is empty: ", policy_file_path)
+    end
+else
+    ngx.log(ngx.ERR, "[Policy Config] Failed to open policy file: ", policy_file_path)
+end
+
+-- 如果配置文件读取失败，使用默认策略
+if not new_user_policy then
+    ngx.log(ngx.WARN, "[Policy Config] Using default policy configuration")
+    new_user_policy = {
+        EnableAllFolders = false,
+        EnableUserPreferenceAccess = false,
+        EnableMediaConversion = false,
+        AllowCameraUpload = false,
+        EnableSharedDeviceControl = false,
+        IsHidden = true,
+        IsHiddenRemotely = true,
+        IsHiddenFromUnusedDevices = true
+    }
+end
+
 -- Base32 解码函数
 local function base32_decode(secret)
     secret = string.upper(string.gsub(secret, "%s", ""))
@@ -187,6 +226,7 @@ _G.generate_totp = generate_totp
 _G.emby_api_key = emby_api_key
 _G.emby_backend = emby_backend
 _G.server_name = server_name
+_G.new_user_policy = new_user_policy
 
 -- 速率限制配置
 _G.rate_limit_config = {

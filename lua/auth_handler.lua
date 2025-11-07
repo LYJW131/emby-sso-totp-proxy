@@ -316,16 +316,21 @@ function create_emby_user(username, original_body)
     ngx.log(ngx.INFO, "[Emby Web] ========== Starting user policy setup ==========")
     ngx.log(ngx.INFO, "[Emby Web] Target user ID: ", user_id)
     
-    local policy_config = {
-        EnableAllFolders = false,
-        EnableUserPreferenceAccess = false,
-        EnableMediaConversion = false,
-        AllowCameraUpload = false,
-        EnableSharedDeviceControl = false,
-        IsHidden = true,
-        IsHiddenRemotely = true,
-        IsHiddenFromUnusedDevices = true
-    }
+    -- 使用全局变量中的策略配置
+    local policy_config = _G.new_user_policy
+    if not policy_config then
+        ngx.log(ngx.ERR, "[Emby Web] User policy configuration not found in global variable - using default")
+        policy_config = {
+            EnableAllFolders = false,
+            EnableUserPreferenceAccess = false,
+            EnableMediaConversion = false,
+            AllowCameraUpload = false,
+            EnableSharedDeviceControl = false,
+            IsHidden = true,
+            IsHiddenRemotely = true,
+            IsHiddenFromUnusedDevices = true
+        }
+    end
     local policy_body = cjson.encode(policy_config)
     
     ngx.log(ngx.INFO, "[Emby Web] Policy configuration: ", policy_body)

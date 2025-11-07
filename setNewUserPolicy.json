@@ -1,0 +1,10 @@
+{
+    "EnableAllFolders": false,
+    "EnableUserPreferenceAccess": false,
+    "EnableMediaConversion": false,
+    "AllowCameraUpload": false,
+    "EnableSharedDeviceControl": false,
+    "IsHidden": true,
+    "IsHiddenRemotely": true,
+    "IsHiddenFromUnusedDevices": true
+}
